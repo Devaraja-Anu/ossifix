@@ -1,0 +1,31 @@
+
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.out
+*.test
+
+/dist/
+/bin/
+/build/
+
+*.log
+
+.vscode/
+
+.env
+
+# Go build artifacts
+*.test
+*.out
+*.a
+*.o
+*.obj
+
+# Go coverage/profile files
+*.cover
+*.cov
+*.prof

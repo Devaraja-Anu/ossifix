@@ -1,0 +1,36 @@
+package main
+
+import (
+	"fmt"
+	"net/http"
+)
+
+const version = "1.00.00"
+
+type config struct {
+	port int
+	// env  string
+}
+
+type application struct {
+	cfg config
+}
+
+func main() {
+
+	cfg := config{
+		port: 3000,
+	}
+
+	app := &application{
+		cfg: cfg,
+	}
+
+	srv := &http.Server{
+		Addr:    fmt.Sprintf("%v", app.cfg.port),
+		Handler: &http.ServeMux{},
+	}
+
+	srv.ListenAndServe()
+
+}
