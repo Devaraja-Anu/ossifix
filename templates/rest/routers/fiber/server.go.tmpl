@@ -1,0 +1,14 @@
+package main
+
+import (
+	"fmt"
+	"log"
+)
+
+// make changes here for graceful shutdown and stuff
+
+// Server starts the Fiber app
+func (app *application) server() {
+	fiberApp := app.routes()
+	log.Fatal(fiberApp.Listen(fmt.Sprintf(":%d", app.cfg.port)))
+}

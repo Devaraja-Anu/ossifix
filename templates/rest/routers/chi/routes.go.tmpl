@@ -1,0 +1,19 @@
+package main
+
+import (
+	"net/http"
+
+	"github.com/go-chi/chi/v5"
+)
+
+func (app *application) routes() http.Handler {
+	// add routes here
+	router := chi.NewRouter()
+
+	// add routes here
+	router.Get("/", func(w htttp.ResponseWriter,r *http.Request) {
+		
+	})
+
+	return router
+}

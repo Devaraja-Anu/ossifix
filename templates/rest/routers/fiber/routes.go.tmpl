@@ -1,0 +1,18 @@
+package main
+
+import (
+	"fmt"
+	"log"
+
+	"github.com/gofiber/fiber/v2"
+)
+
+func (app *application) routes() *fiber.App {
+	fiberApp := fiber.New()
+
+	fiberApp.Get("/", func(c *fiber.Ctx) error {
+		return c.SendString("Hello, World!")
+	})
+
+	return fiberApp
+}

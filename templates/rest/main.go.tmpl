@@ -1,9 +1,5 @@
 package main
 
-import (
-	"fmt"
-	"net/http"
-)
 
 const version = "1.00.00"
 
@@ -26,11 +22,6 @@ func main() {
 		cfg: cfg,
 	}
 
-	srv := &http.Server{
-		Addr:    fmt.Sprintf("%v", app.cfg.port),
-		Handler: &http.ServeMux{},
-	}
-
-	srv.ListenAndServe()
+	app.server()
 
 }

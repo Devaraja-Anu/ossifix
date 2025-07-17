@@ -1,0 +1,15 @@
+package main
+
+func(app *application) server() error {
+
+    srv := &http.Server{
+		Addr:         fmt.Sprintf(":%d", app.config.port),
+		Handler:      app.routes(),
+	}
+
+    err := srv.ListenAndServe()
+	if !errors.Is(err, http.ErrServerClosed) {
+		return err
+	}
+
+}
