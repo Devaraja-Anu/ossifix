@@ -1,4 +1,12 @@
-func ginRoutes() http.Handler {
+package main
+
+import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+)
+
+func (app *application) routes() http.Handler {
 	r := gin.Default()
 
 	r.GET("/", func(c *gin.Context) {
@@ -6,6 +14,6 @@ func ginRoutes() http.Handler {
 			"message": "Hello from Gin!",
 		})
 	})
-    
+
 	return r
 }

@@ -11,18 +11,20 @@ type errMsg error
 
 type Model struct {
 	TextInput textinput.Model
+	Question  string
 	err       error
 }
 
-func InitModel() Model {
+func InitModel(question string, placeholder string) Model {
 	ti := textinput.New()
-	ti.Placeholder = "your-project-name"
+	ti.Placeholder = placeholder
 	ti.Focus()
 	ti.CharLimit = 156
-	ti.Width = 20
+	ti.Width = 60
 
 	return Model{
 		TextInput: ti,
+		Question:  question,
 		err:       nil,
 	}
 }
@@ -51,7 +53,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m Model) View() string {
 	return fmt.Sprintf(
-		"What is the name of the root folder?\n\n%s\n\n%s",
+		"%s\n\n%s\n\n%s",
+		m.Question,
 		m.TextInput.View(),
 		"(esc to quit)",
 	)

@@ -2,8 +2,10 @@ package spinner
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 
+	"github.com/Devaraja-Anu/ossifix/internal/models"
 	"github.com/Devaraja-Anu/ossifix/internal/scaffold"
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
@@ -11,11 +13,13 @@ import (
 )
 
 type model struct {
-	steps    []string
-	index    int
-	spinner  spinner.Model
-	done     bool
-	rootpath string
+	steps       []string
+	index       int
+	spinner     spinner.Model
+	done        bool
+	rootpath    string
+	projectName string
+	router      string
 }
 
 var stepsList = []string{
@@ -24,13 +28,16 @@ var stepsList = []string{
 	"Installing Dependencies",
 }
 
-func NewModel(rootpath string) model {
+func NewModel(projectDetails models.ProjectDetails) model {
+
 	s := spinner.New()
 	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("63"))
 	return model{
-		steps:    stepsList,
-		rootpath: rootpath,
-		spinner:  s,
+		steps:       stepsList,
+		rootpath:    projectDetails.RootName,
+		projectName: projectDetails.ProjectName,
+		router:      projectDetails.Router,
+		spinner:     s,
 	}
 }
 
@@ -39,7 +46,7 @@ type completedMessage string
 // runstep runs actual logic
 
 func (m model) Init() tea.Cmd {
-	return tea.Batch(runSteps(m.index, m.rootpath), m.spinner.Tick)
+	return tea.Batch(runSteps(m.index, m.rootpath, m.projectName, m.router), m.spinner.Tick)
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -54,7 +61,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.done = true
 			return m, tea.Quit
 		}
-		return m, runSteps(m.index, m.rootpath)
+		return m, runSteps(m.index, m.rootpath, m.projectName, m.router)
 	case spinner.TickMsg:
 		var cmd tea.Cmd
 		m.spinner, cmd = m.spinner.Update(msg)
@@ -79,25 +86,30 @@ func (m model) View() string {
 	)
 }
 
-func runSteps(stepIndex int, rootpath string) tea.Cmd {
+func runSteps(stepIndex int, rootpath string, projectName string, router string) tea.Cmd {
 	return func() tea.Msg {
 		var err error
 		switch stepIndex {
+
 		case 0:
-			cmd := exec.Command("go", "mod", "init", rootpath)
+			err = scaffold.CreateScaffold(rootpath, router)
+			if err != nil {
+				return completedMessage("✗ Failed to parse templates ")
+			}
+		case 1:
+			cmd := exec.Command("go", "mod", "init", projectName)
 			cmd.Dir = rootpath
+			cmd.Stderr = os.Stderr
+			cmd.Stdout = os.Stdout
 			err = cmd.Run()
 			if err != nil {
 				return completedMessage("✗ Failed to init project")
 			}
-		case 1:
-			err = scaffold.CreateFiles(rootpath)
-			if err != nil {
-				return completedMessage("✗ Failed to parse templates ")
-			}
 		case 2:
 			mod := exec.Command("go", "mod", "tidy")
 			mod.Dir = rootpath
+			mod.Stderr = os.Stderr
+			mod.Stdout = os.Stdout
 			err = mod.Run()
 			if err != nil {
 				return completedMessage("✗ Failed to install all dependencies ")

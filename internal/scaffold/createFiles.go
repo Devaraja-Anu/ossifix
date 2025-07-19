@@ -2,9 +2,9 @@ package scaffold
 
 import (
 	"fmt"
-	"html/template"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 const (
@@ -12,7 +12,7 @@ const (
 	FilePerm = 0644
 )
 
-func CreateFiles(rootpath string) error {
+func CreateScaffold(rootpath string, router string) error {
 
 	dirStructure := []string{
 		filepath.Join(rootpath, "cmd", "api"),
@@ -26,23 +26,22 @@ func CreateFiles(rootpath string) error {
 		}
 	}
 
-	tmpl, err := template.ParseFiles(filepath.Join("templates", "rest", "main.go.tmpl"))
-	if err != nil {
-		fmt.Println("Error creating file templ")
-		return err
-	}
-
-	file, err := os.Create(filepath.Join(rootpath, "cmd", "api", "main.go"))
-	if err != nil {
-		fmt.Println("Error creating file templ")
-		return err
-	}
-
-	err = tmpl.Execute(file, nil)
-
+	tmpls, err := newTemplateCache("/rest/common")
 	if err != nil {
 		fmt.Println("Error executing templ")
-		return err
+	}
+	err = createAndWriteFiles(rootpath, tmpls)
+	if err != nil {
+		fmt.Println("error writing files")
+	}
+
+	tmpls, err = newTemplateCache(fmt.Sprintf("/rest/routers/%s", strings.ToLower(router)))
+	if err != nil {
+		fmt.Println("Error executing templ")
+	}
+	err = createAndWriteFiles(rootpath, tmpls)
+	if err != nil {
+		fmt.Println("error writing files")
 	}
 
 	return nil
