@@ -75,9 +75,3 @@ If you'd like starter issues (tests, docs, example flows), open an issue and I'l
 ## License
 
 This repository is licensed under the MIT License — see the `LICENSE` file.
-
-## Next steps
-
-- Add `CONTRIBUTING.md` and `CODE_OF_CONDUCT.md`.
-- Add unit/integration tests for `internal/scaffold` and template generation.
-- Add CI to run tests and linters.
